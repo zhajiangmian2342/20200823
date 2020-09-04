@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block script %}
+    <script src="https://cdn.bootcss.com/ace/1.4.6/ace.js"></script>
+  <script src="https://cdn.bootcss.com/ace/1.4.6/mode-json.js"></script>
+  <script src="https://cdn.bootcss.com/ace/1.4.6/mode-python.js"></script>
+{% endblock %}
+{% block content %}
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md6">
+            <label class="layui-form-label" style="width:100px">调试数据</label>
+        </div>
+        <div class="layui-col-md6">
+            <label class="layui-form-label" style="width:100px">自定义关键字</label>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-md6">
+            <div id="mock" style="height:350px;max-height:800px;width:90%"></div>
+        </div>
+        <div class="layui-col-md6" >
+            <div id='editor' style="height:350px;max-height:800px;width:90%"></div>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-btn-group">
+            <button id="debug" type="button" class="layui-btn">调试</button>
+            <button id="save" type="button" class="layui-btn">保存</button>
+        </div>
+    </div>
+</div>
+<script>
+    //实例化了一个编辑器对象
+var mock = ace.edit('mock')
+//设置编辑器的皮肤
+mock.setTheme('ace/theme/monokai')
+//设置这个代码的模式(json,python)
+mock.getSession().setMode('ace/mode/json')
+//设置是否可以折叠(true,false)
+mock.getSession().setUseWrapMode(true)
+//设置字体大小
+mock.setFontSize(15)
+
+//实例化了一个编辑器对象
+var editor = ace.edit('editor')
+//设置编辑器的皮肤
+editor.setTheme('ace/theme/monokai')
+//设置这个代码的模式(json,python)
+editor.getSession().setMode('ace/mode/python')
+//设置是否可以折叠(true,false)
+editor.getSession().setUseWrapMode(true)
+//设置字体大小
+editor.setFontSize(15)
+function debug(){
+    var url = '/variable/api/v1/debug'
+    var data = {
+        //编辑器获取里面的代码用的方法是getValue()
+        'mock': mock.getValue(),
+        'snippet':editor.getValue()
+    }
+    http(url,'post',data,function(data){
+        console.log(data)
+        alert(data['data'])
+    },function(data){
+        console.log(data)
+    })
+}
+function save(){
+ var url = '/variable/api/v1/save'
+    var data = {
+        //编辑器获取里面的代码用的方法是getValue()
+        'mock': mock.getValue(),
+        'snippet':editor.getValue()
+    }
+    http(url,'post',data,function(data){
+        console.log(data)
+    },function(data){
+        console.log(data)
+    })
+}
+
+//jquery的方式
+$(function(){
+    $('#debug').click(debug)
+    $('#save').click(save)
+
+})
+
+
+
+
+
+</script>
+
+{% endblock %}

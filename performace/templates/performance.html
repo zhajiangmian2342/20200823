@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block script %}
+    <script src="https://cdn.bootcss.com/ace/1.4.6/ace.js"></script>
+  <script src="https://cdn.bootcss.com/ace/1.4.6/mode-json.js"></script>
+  <script src="https://cdn.bootcss.com/ace/1.4.6/mode-python.js"></script>
+{% endblock %}
+{% block content %}
+<div class="layui-container" style="padding-top:30px;">
+    <div class="layui-row">
+        <div class="layui-col-md8">
+             <div id="editor" style="height:350px;max-height:800px;width:90%">
+
+from locust import TaskSet,HttpUser,task,between
+
+class MyGetTask(TaskSet):
+    url = '/'
+    @task
+    def get_test(self):
+        with self.client.get(self.url,name='get接口',timeout=10,catch_response=True) as response:
+            resp_str = response.text
+            if 'baidu' in resp_str:
+                response.success()
+            else:
+                response.failure(resp_str)
+
+class MyGetUser(HttpUser):
+    tasks = [MyGetTask]
+    host = 'https://www.baidu.com/'
+    wait_time = between(2, 2)
+             </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">被测域名</label>
+                <div class="layui-input-block">
+                     <input type="text" id="host" required layui-verify="required" placeholder="请输入域名" autocomplete="off"
+                class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户总数</label>
+                <div class="layui-input-block">
+                     <input type="text" id="user" required layui-verify="required" placeholder="请输入域名" autocomplete="off"
+                class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">每秒请求</label>
+                <div class="layui-input-block">
+                     <input type="text" id="rps" required layui-verify="required" placeholder="请输入域名" autocomplete="off"
+                class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">运行时间</label>
+                <div class="layui-input-block">
+                     <input type="text" id="time" required layui-verify="required" placeholder="请输入域名" autocomplete="off"
+                class="layui-input">
+                </div>
+            </div>
+            <button id="go" type="button" class="layui-btn">开始压测</button>
+        </div>
+
+    </div>
+
+</div>
+<script>
+    //实例化了一个编辑器对象
+var editor = ace.edit('editor')
+//设置编辑器的皮肤
+editor.setTheme('ace/theme/clouds')
+//设置这个代码的模式(json,python)
+editor.getSession().setMode('ace/mode/python')
+//设置是否可以折叠(true,false)
+editor.getSession().setUseWrapMode(true)
+//设置字体大小
+editor.setFontSize(15)
+function go(){
+    var url = '/performance/api/v1/go'
+    var data = {
+        'code':editor.getValue(),
+        'host': $('#host').val(),
+        'user':$('#user').val(),
+        'rps':$('#rps').val(),
+        'time':$('#time').val()
+    }
+    http(url,'post',data,function(data){
+        console.log(data)
+        alert(JSON.stringify(data['data']))
+    },function(data){
+        console.log(data)
+    })
+
+
+}
+$(function(){
+$('#go').click(go)
+
+})
+</script>
+{% endblock %}

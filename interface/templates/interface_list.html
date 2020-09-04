@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<div class="layui-row">
+  <form class="layui-form">
+      <div class="layui-col-md3 layui-input-inline">
+          <select id="team" lay-filter="team">
+          </select>
+      </div>
+      <div class="layui-col-md3 layui-input-inline">
+          <select id="project" lay-filter="project">
+
+          </select>
+      </div>
+      <div class="layui-col-md6 layui-input-inline">
+         <button id="suite" type="button" class="layui-btn layui-btn-primary">创建套件</button>
+      </div>
+    </form>
+</div>
+
+<table id="variable" lay-filter="test"></table>
+<script type="text/html" id="tool">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">增加</a>
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    var menu;
+    //定义函数，目的就是前后端交互，从后台获取数据，然后渲染到页面上去
+    //获取数据之后:先拼接team，然后在拼接project,拼接project之前是不是要选中team
+    function get_menu(form){
+        var url = '/interface/api/v1/team_and_project'
+        http(url,'get',{},function(data){
+            menu = data['data']
+            var html = ''
+            for (var team in menu){
+                html += '<option value="'+team+'">'+team+'</option>'
+            }
+
+            $('#team').append(html)
+            //进入首页可以看到team和project
+            var team
+            for (var key in menu){
+                team = key
+                break
+            }
+            //拼接project
+            var html = ''
+            for (var i in menu[team]){
+                html += '<option value="'+menu[team][i]+'">'+menu[team][i]+'</option>'
+
+            }
+            $('#project').append(html)
+            //只有加了这句才能渲染出form表单的页面form.render()
+            form.render()
+
+        },function(data){
+            console.log(data)
+        })
+
+    }
+    //将模块引入项目中
+    // 自定义模块，这里只需要开放soulTable即可
+        layui.config({
+            base: '{/}/static/ext/',   // 第三方模块所在目录
+            // {/}的意思即代表采用自有路径，即不跟随 base 路径
+
+        }).extend({
+            soulTable: 'soulTable',//模块的别名
+        });
+
+    layui.use(['table','form','layer','soulTable'],function(){
+         var form = layui.form
+         var table = layui.table
+         var layer = layui.layer
+         var soulTable = layui.soulTable
+         $('#suite').click(function(){
+            var url= '/interface/api/v1/suite'
+            //我应该给后台传哪些数据
+            var data = {
+                'team':$('#team').val(),
+                'project':$('#project').val(),
+                'cases':[]
+            }
+            //table.cache.variable
+            //table就是table对象，cache指的是缓存，variable就是table对应的id值
+            console.log(table.cache.variable)
+            tableCase = table.cache.variable
+            //LAY_CHECKED: true
+            for(var i in tableCase ){
+                if (tableCase[i]['LAY_CHECKED']==true){
+                    data['cases'].push(tableCase[i]['_id'])
+                }
+            }
+            http(url,'post',data,function(data){
+                console.log(data)
+            },function(data){
+                console.log(data)
+            })
+         })
+
+         //对table进行渲染
+         var tableIns = table.render({
+            elem: '#variable' //指定原始表格元素选择器（推荐id选择器）
+            ,height: 420 //容器高度
+            ,url:'/interface/api/v1/list' //提供数据，数据接口
+            ,title:'变量管理'
+            ,page:true //开启分页
+            ,toolbar: 'false'
+            ,cols: [[ //表头
+                    {type: 'checkbox', fixed: 'left'}
+                    ,{field: '_id', title: 'ID', width:280,fixed:'left'}
+                    ,{field: 'team', title: '团队', width:200}
+                    ,{field: 'project', title: '项目', width:200}
+                   ,{field: 'name', title: '名称', width:200}
+                   ,{field: 'method', title: '方法', width:200,sort: true}
+                   ,{field: 'url', title: '地址', width:200,sort: true}
+                   ,{fixed:'right', width:165,align:'center',toolbar:'#tool'}
+                 ]]
+            ,parseData: function(data){ //res 即为原始返回的数据
+                    return {
+                            "code": data.status, //解析接口状态0
+                            "msg": data.message, //解析提示文本
+                            "count": data.data.length, //解析数据长度
+                            "data": data.data //解析数据列表
+                    };
+            }
+            //行拖拽
+            ,rowDrag:{
+                trigger:'row',
+                done:function(obj){
+
+                }
+            }
+            //对soulTable进行渲染
+            ,done:function(){
+                soulTable.render(this)
+
+            }
+
+         });
+           //调用函数
+          get_menu(form)
+          //监听team事件:获取team的值，然后根据team的值找到对应的project，然后渲染出来
+        form.on('select(team)',function(data){
+            var team = $('#team').val()
+            //拼接之前置为空
+            $('#project').empty()
+            projects = menu[team]
+            var html = ''
+            for (var i in projects){
+                html += '<option value="'+projects[i]+'">'+projects[i]+'</option>'
+            }
+            $('#project').append(html)
+            //form表单渲染
+            form.render()
+        })
+         //监听project事件:table.reload()
+         form.on('select(project)',function(data){
+            tableIns.reload({
+              url : '/interface/api/v1/list',
+              where:{
+                page:0,
+                limit:20,
+                team:$('#team').val(),
+                project:$('#project').val()
+
+              }
+
+            })
+        })
+
+         //对右边的tool进行操作tool/toolbar(lay-filter的值)
+         table.on('tool(test)',function(obj){
+            var data = obj.data  //获得当前行的数据
+            console.log(data)
+            switch(obj.event){
+                case 'add':
+                    //直接页面跳转到创建接口页面
+                    window.location = '/interface/create'
+                    break
+                case 'edit':
+                    window.location = '/interface/edit/'+data['_id']
+                    break
+                case 'del':
+                    layer.open({
+                        title:'删除变量',
+                        content:'请谨慎操作，删除不可逆',
+                        yes:function(index,layero){
+                            var url = '/interface/api/v1/delete'
+                            var params = {
+                                'id_list':[data['_id']],
+                            }
+
+                            http(url,'post',params,function(data){
+                                layer.msg(data.message)
+                                tableIns.reload({
+                                    url:'/interface/api/v1/list',
+                                });
+                            },function(data){
+                                layer.msg('删除变量失败，请联系平台开发人员')
+
+                            })
+
+                        }
+
+                    })
+                    break
+            }
+         })
+
+
+
+    })
+</script>
+{% endblock %}

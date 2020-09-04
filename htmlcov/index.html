@@ -1,0 +1,185 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Coverage report</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.ba-throttle-debounce.min.js"></script>
+    <script type="text/javascript" src="jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="jquery.hotkeys.js"></script>
+    <script type="text/javascript" src="coverage_html.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(coverage.index_ready);
+    </script>
+</head>
+<body class="indexfile">
+
+<div id="header">
+    <div class="content">
+        <h1>Coverage report:
+            <span class="pc_cov">20%</span>
+        </h1>
+
+        <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
+
+        <form id="filter_container">
+            <input id="filter" type="text" value="" placeholder="filter..." />
+        </form>
+    </div>
+</div>
+
+<div class="help_panel">
+    <img id="panel_icon" src="keybd_open.png" alt="Hide keyboard shortcuts" />
+    <p class="legend">Hot-keys on this page</p>
+    <div>
+    <p class="keyhelp">
+        <span class="key">n</span>
+        <span class="key">s</span>
+        <span class="key">m</span>
+        <span class="key">x</span>
+        
+        <span class="key">c</span> &nbsp; change column sorting
+    </p>
+    </div>
+</div>
+
+<div id="index">
+    <table class="index">
+        <thead>
+            
+            <tr class="tablehead" title="Click to sort">
+                <th class="name left headerSortDown shortkey_n">Module</th>
+                <th class="shortkey_s">statements</th>
+                <th class="shortkey_m">missing</th>
+                <th class="shortkey_x">excluded</th>
+                
+                <th class="right shortkey_c">coverage</th>
+            </tr>
+        </thead>
+        
+        <tfoot>
+            <tr class="total">
+                <td class="name left">Total</td>
+                <td>599</td>
+                <td>481</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="118 599">20%</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            
+            <tr class="file">
+                <td class="name left"><a href="automation___init___py.html">automation\__init__.py</a></td>
+                <td>37</td>
+                <td>30</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="7 37">19%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="automation_kwLibrary_py.html">automation\kwLibrary.py</a></td>
+                <td>28</td>
+                <td>17</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="11 28">39%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="automation_service_py.html">automation\service.py</a></td>
+                <td>31</td>
+                <td>20</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="11 31">35%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="common___init___py.html">common\__init__.py</a></td>
+                <td>47</td>
+                <td>40</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="7 47">15%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="common_mongo_py.html">common\mongo.py</a></td>
+                <td>45</td>
+                <td>35</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="10 45">22%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="interface___init___py.html">interface\__init__.py</a></td>
+                <td>101</td>
+                <td>83</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="18 101">18%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="interface_compare_py.html">interface\compare.py</a></td>
+                <td>11</td>
+                <td>5</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="6 11">55%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="interface_service_py.html">interface\service.py</a></td>
+                <td>141</td>
+                <td>118</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="23 141">16%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="variable___init___py.html">variable\__init__.py</a></td>
+                <td>105</td>
+                <td>93</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="12 105">11%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="variable_service_py.html">variable\service.py</a></td>
+                <td>53</td>
+                <td>40</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="13 53">25%</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <p id="no_rows">
+        No items found using the specified filter.
+    </p>
+</div>
+
+<div id="footer">
+    <div class="content">
+        <p>
+            <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.3</a>,
+            created at 2020-08-16 09:53
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

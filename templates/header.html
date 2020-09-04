@@ -1,0 +1,29 @@
+<ul class="layui-nav" lay-filter="">
+  <li class="layui-nav-item"><a href="/">testfan</a></li>
+  <li class="layui-nav-item"><a href="/automation">ui自动化</a></li>
+  <li class="layui-nav-item">
+    <a href="javascript:;">接口测试</a>
+    <dl class="layui-nav-child" style="z-index:999"> <!-- 二级菜单 -->
+      <dd><a href="/interface/create" >创建接口</a></dd>
+      <dd><a href="/interface/list">接口列表</a></dd>
+      <dd><a href="/interface/suite/list">接口套件</a></dd>
+    </dl>
+  </li>
+  <li class="layui-nav-item">
+    <a href="javascript:;">配置管理</a>
+    <dl class="layui-nav-child" style="z-index:999"> <!-- 二级菜单 -->
+      <dd><a href="/variable/" >变量管理</a></dd>
+      <dd><a href="/variable/keyword">关键字</a></dd>
+    </dl>
+  </li>
+  <li class="layui-nav-item"><a href="/performance">性能测试</a></li>
+</ul>
+
+<script>
+//注意：导航 依赖 element 模块，否则无法进行功能性操作
+layui.use('element', function(){
+  var element = layui.element;
+
+  //…
+});
+</script>

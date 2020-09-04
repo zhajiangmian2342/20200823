@@ -1,0 +1,51 @@
+{%extends 'base.html'%}
+{% block style%}
+<style>
+        html,body {
+            background:#F6F6F6
+        }
+        .container {
+            margin:0 auto;
+            padding:200px 0 0 40%
+
+        }
+        .row {
+            margin-bottom:20px
+
+        }
+        .row div{
+            margin:0 auto
+        }
+</style>
+
+{% endblock %}
+{% block script %}
+<script src="/automation/static/automation.js"></script>
+{% endblock %}
+{% block content %}
+    <div class="container" style="background-color:#F6F6F6">
+        <div class="row">
+            <label>用例名称</label>
+            <input id="name" type="text">
+        </div>
+        <div class="row">
+            <select id="option">
+                <option value="browser">打开网址</option>
+                <option value="find">查找元素</option>
+                <option value="send">输入文本</option>
+                <option value="click">点击</option>
+                <option value="wait">等待</option>
+            </select>
+            <input id="command" type="button" value="添加">
+        </div>
+
+        <div class="row">
+              <div id="cases"></div>
+        </div>
+        <div>
+            <input type="button" id="run" value="运行">
+            <input type="button" id="save" value="保存">
+        </div>
+    </div>
+
+{% endblock %}

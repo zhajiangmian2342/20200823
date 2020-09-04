@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+{% block style %}
+<link rel="stylesheet" href="/interface/static/interface.css">
+{% endblock %}
+{% block content %}
+<div class="layui-container">
+    <h1>创建接口</h1>
+    <form class="layui-form">
+        <div class="layui-row">
+            <div class="layui-col-md6">
+                <div class="layui-row">
+                    <div class="layui-col-md3">
+                        <select id="team" lay-filter="team">
+
+                        </select>
+                    </div>
+                    <div class="layui-col-md3">
+                        <select id="project" lay-filter="project">
+
+                        </select>
+                    </div>
+                    <div class="layui-col-md6">
+                        <input type="text" id="name" required lay-verify="required" placeholder="请输入请求的描述" autocomplete="off"
+                                   class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-col-md2">
+                        <select id="method" lay-verify="">
+                            <option value="get">get</option>
+                            <option value="post">post</option>
+                            <option value="put">put</option>
+                            <option value="delete">delete</option>
+                        </select>
+                    </div>
+                    <div class="layui-col-md10">
+                        <div class="layui-input-inline url">
+                            <input type="text" id="url" required lay-verify="required" placeholder="请输入请求" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-md2">
+                        <button id="header" type="button" class="layui-btn">header</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button id="params" type="button" class="layui-btn">params</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button id="assert" type="button" class="layui-btn">assert</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button id="extract" type="button" class="layui-btn">extract</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button id="debug" type="button" class="layui-btn">debug</button>
+                    </div>
+                    <div class="layui-col-md2">
+                        <button id="save" type="button" class="layui-btn">save</button>
+                    </div>
+                </div>
+                <div id="header_section" style="display:none;">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>Header</legend>
+                    </fieldset>
+                </div>
+                <div id="params_section" style="display:none;">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>Params</legend>
+                    </fieldset>
+                </div>
+                <div id="assert_section" style="display:none;">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>Assert</legend>
+                    </fieldset>
+                </div>
+                <div id="extract_section" style="display:none;">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>Extract</legend>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="layui-col-md6">
+                <div id="result"></div>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<script>
+    function add_header(){
+        $('#header').click(function(){
+            var html = ""
+            html +=
+                 '<div class="layui-row">'+
+                    '<div class="layui-col-md6">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text"  required lay-verify="required" placeholder="头部键" autocomplete="off"'+
+                                   'class="layui-input header_key">'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="layui-col-md6">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text" id="url" required lay-verify="required" placeholder="头部值" autocomplete="off"'+
+                                   'class="layui-input header_value">'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'
+            $('#header_section').append(html)
+            $('#header_section').show()
+        })
+    }
+    function add_params(){
+        $('#params').click(function(){
+            var html = ""
+            html +=
+                 '<div class="layui-row">'+
+                    '<div class="layui-col-md6">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text"  required lay-verify="required" placeholder="参数键" autocomplete="off"'+
+                                   'class="layui-input params_key">'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="layui-col-md6">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text" id="url" required lay-verify="required" placeholder="参数值" autocomplete="off"'+
+                                   'class="layui-input params_value">'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'
+            $('#params_section').append(html)
+            $('#params_section').show()
+        })
+
+    }
+    function add_assert(form){
+        $('#assert').click(function(){
+            var html = ""
+            html +=
+             '<div class="layui-row">'+
+                    '<div class="layui-col-md2">'+
+                        '<select class="source" lay-verify="">'+
+                            '<option value="code">状态码</option>'+
+                            '<option value="body">请求体</option>'+
+                        '</select>'+
+                    '</div>'+
+                    '<div class="layui-col-md4">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text"  required lay-verify="required" placeholder="断言表达式" autocomplete="off"'+
+                                   'class="layui-input assert_key">'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="layui-col-md2">'+
+                        '<select class="condition" lay-verify="">'+
+                            '<option value="eqls">等于</option>'+
+                            '<option value="gt">大于</option>'+
+                            '<option value="lt">小于</option>'+
+                            '<option value="lte">小于等于</option>'+
+                            '<option value="gte">大于等于</option>'+
+                        '</select>'+
+                    '</div>'+
+                    '<div class="layui-col-md4">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text"  required lay-verify="required" placeholder="对比预期值" autocomplete="off"'+
+                                   'class="layui-input assert_value">'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'
+              $('#assert_section').append(html)
+              $('#assert_section').show()
+              form.render()
+
+        })
+
+
+    }
+    function add_extract(){
+        $('#extract').click(function(){
+             var html = ""
+            html +=
+                 '<div class="layui-row">'+
+                    '<div class="layui-col-md6">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text"  required lay-verify="required" placeholder="提取表达式" autocomplete="off"'+
+                                   'class="layui-input extract_expr">'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="layui-col-md6">'+
+                        '<div class="layui-input-inline">'+
+                            '<input type="text" required lay-verify="required" placeholder="提取变量名" autocomplete="off"'+
+                                   'class="layui-input extract_value">'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'
+            $('#extract_section').append(html)
+            $('#extract_section').show()
+        })
+
+    }
+    function get_params(){
+        //采集前端获取的信息发送给后端
+
+        var data={
+            'name':$('#name').val(),
+            'team':$('#team').val(),
+            'project':$('#project').val(),
+            'method':$('#method').val(),
+            'url':$('#url').val(),
+            'header':{},
+            'params':{},
+            'assert':[],
+            'extract':[]
+        }
+        $('.header_key').each(function(index,element){
+            var key = $('.header_key').eq(index).val()
+            var value = $('.header_value').eq(index).val()
+            data['header'][key]=value
+        })
+        $('.params_key').each(function(index,element){
+            var key = $('.params_key').eq(index).val()
+            var value = $('.params_value').eq(index).val()
+            data['params'][key]=value
+
+        })
+        $('.assert_key').each(function(index,element){
+            var source = $('.source').eq(index).val()
+            var expr = $('.assert_key').eq(index).val()
+            var condition =  $('.condition').eq(index).val()
+            var value = $('.assert_value').eq(index).val()
+            data['assert'].push({
+                'source':source,
+                'expression':expr,
+                'condition':condition,
+                'expected':value
+                })
+
+        })
+
+
+        $('.extract_expr').each(function(index,element){
+            var expr = $('.extract_expr').eq(index).val()
+            var value = $('.extract_value').eq(index).val()
+            data['extract'].push({
+                'expression':expr,
+                'expected':value
+            })
+
+        })
+        return data
+    }
+    function debug(){
+        var data = get_params();
+        var url = '/interface/api/v1/debug'
+        http(url,'post',data,function(data){
+                console.log(data)
+               $('#result').append('<pre><code>'+JSON.stringify(data['data']['response']['json'],null,4)+'</pre></code>')
+        },function(data){
+                console.log(data)
+        })
+
+
+    }
+    function save(){
+        var data = get_params();
+        var url = '/interface/api/v1/save'
+        http(url,'post',data,function(data){
+                console.log(data)
+                alert('保存成功')
+               // $('#result').append('<pre><code>'+JSON.stringify(data['data']['response']['json'],null,4)+'</pre></code>')
+        },function(data){
+                console.log(data)
+        })
+
+
+    }
+   //声明一下menu是全局变量
+   var menu;
+    //定义函数，目的就是前后端交互，从后台获取数据，然后渲染到页面上去
+    //获取数据之后:先拼接team，然后在拼接project,拼接project之前是不是要选中team
+    function get_menu(form){
+        var url = '/interface/api/v1/team_and_project'
+        http(url,'get',{},function(data){
+            menu = data['data']
+            var html = ''
+            for (var team in menu){
+                html += '<option value="'+team+'">'+team+'</option>'
+            }
+
+            $('#team').append(html)
+            //进入首页可以看到team和project
+            var team
+            for (var key in menu){
+                team = key
+                break
+            }
+            //拼接project
+            var html = ''
+            for (var i in menu[team]){
+                html += '<option value="'+menu[team][i]+'">'+menu[team][i]+'</option>'
+
+            }
+            $('#project').append(html)
+            //只有加了这句才能渲染出form表单的页面form.render()
+            form.render()
+
+        },function(data){
+            console.log(data)
+        })
+
+    }
+
+    layui.use('form',function(){
+        var form = layui.form
+        add_header()
+        add_params()
+        add_assert(form)
+        add_extract()
+        $('#debug').click(debug)
+        $('#save').click(save)
+        //调用函数
+        get_menu(form)
+        //监听team事件:获取team的值，然后根据team的值找到对应的project，然后渲染出来
+        form.on('select(team)',function(data){
+            var team = $('#team').val()
+            //拼接之前置为空
+            $('#project').empty()
+            projects = menu[team]
+            var html = ''
+            for (var i in projects){
+                html += '<option value="'+projects[i]+'">'+projects[i]+'</option>'
+            }
+            $('#project').append(html)
+            //form表单渲染
+            form.render()
+        })
+    })
+
+
+</script>
+{% endblock %}

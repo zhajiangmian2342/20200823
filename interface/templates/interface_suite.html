@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{%block content%}
+
+<table id="variable" lay-filter="test"></table>
+<script type="text/html" id="tool">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="trigger">运行</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+
+    layui.use(['table','form','layer'],function(){
+         var form = layui.form
+         var table = layui.table
+         var layer = layui.layer
+
+         //对table进行渲染
+         var tableIns = table.render({
+            elem: '#variable' //指定原始表格元素选择器（推荐id选择器）
+            ,height: 420 //容器高度
+            ,url:'/interface/api/v1/suite/list' //提供数据，套件数据接口
+            ,title:'变量管理'
+            ,page:true //开启分页
+            ,toolbar: true
+            ,cols: [[ //表头
+                    {type: 'checkbox', fixed: 'left'}
+                    ,{field: '_id', title: 'ID', width:280,fixed:'left'}
+                    ,{field: 'team', title: '团队', width:200}
+                    ,{field: 'project', title: '项目', width:200}
+                   ,{field: 'cases', title: '用例', width:550}
+                   ,{fixed:'right', width:165,align:'center',toolbar:'#tool'}
+                 ]]
+            ,parseData: function(data){ //res 即为原始返回的数据
+                    return {
+                            "code": data.status, //解析接口状态0
+                            "msg": data.message, //解析提示文本
+                            "count": data.data.length, //解析数据长度
+                            "data": data.data //解析数据列表
+                    };
+            }
+
+         });
+
+
+         //对右边的tool进行操作tool/toolbar(lay-filter的值)
+         table.on('tool(test)',function(obj){
+            var data = obj.data  //获得当前行的数据
+            console.log(data)
+            switch(obj.event){
+                case 'trigger':
+                    var url = '/interface/api/v1/trigger'
+                    var data = {
+                        'id':data['_id']
+                    }
+                    http(url,'get',data,function(data){
+                        layer.msg(data['data'])
+                    },function(data){
+                        console.log(data)
+                    })
+                    break
+                case 'del':
+                    layer.open({
+                        title:'删除变量',
+                        content:'请谨慎操作，删除不可逆',
+                        yes:function(index,layero){
+                            var url = '/interface/api/v1/suite/delete'
+                            var params = {
+                                'id_list':[data['_id']],
+                            }
+
+                            http(url,'post',params,function(data){
+                                layer.msg(data.message)
+                                tableIns.reload({
+                                    url:'/interface/api/v1/suite/list',
+                                });
+                            },function(data){
+                                layer.msg('删除变量失败，请联系平台开发人员')
+
+                            })
+
+                        }
+
+                    })
+                    break
+            }
+         })
+
+
+
+    })
+</script>
+{% endblock %}
